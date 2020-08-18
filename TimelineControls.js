@@ -17,7 +17,11 @@
       Object.setPrototypeOf(sliderBox, TimelineControlsSliderElement.prototype)
       
       sliderInput.addEventListener('change', () => {
-        this.switchActual(sliderBox)
+        if (customSpeedBtn.classList.contains('actual')) {
+          customSpeedBtn.value = sliderBox.value
+          this.labelCustom()
+        } else this.switchActual(sliderBox)
+
         const e = this.triggerChange()
         sliderBox.dispatchEvent(e)
       })
@@ -48,7 +52,7 @@
               this.triggerChange()
             } else this.triggerShift(e.target.value)
 
-          } else if (Number.isInteger(+e.target.value)) {
+          } else if (!Number.isNaN(+e.target.value)) {
             if (e.target != customSpeedBtn 
                 && customSpeedBtn.classList.contains('actual')) {
               customSpeedBtn.value = e.target.value
@@ -98,6 +102,7 @@
     labelCustom() {
       const btn = this.elems.customSpeedBtn
       let { value } = btn
+      value = Math.floor(value)
       const days = value / 864e5 | 0
       value %= 864e5
       const hours = value / 36e5 | 0
