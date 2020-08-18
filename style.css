@@ -1,0 +1,72 @@
+.time-row {
+  display: flex;
+  flex-flow: wrap;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.timeline-controls {
+  justify-content: center;
+}
+
+.timeline-controls button {
+  margin: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.timeline-controls button.big {
+  min-height: 36px;
+}
+
+.timeline-controls button.small {
+  margin: 3px 20%;
+}
+
+.timeline-controls input[type="range"]::-webkit-slider-runnable-track {
+  height: 10px;
+  display: flex;
+  align-items: center;
+  background-color: #efefef;
+  border-radius: 5px;
+  border: 1px solid #777;
+}
+
+.clock {
+  display: flex;
+  flex-flow: column;
+  background: #efefef;
+  border-radius: 5px;
+  border: 1px solid #777;
+  align-items: center;
+  justify-content: center;
+  margin: 7px;
+  font-family: sans-serif;
+  padding: 8px;
+  white-space: nowrap;
+  min-width: 152px;
+  box-sizing: border-box;
+}
+
+.clock>.date {
+  font-size: 20px;
+  margin: 4px;
+}
+
+.clock>.time {
+  width: 100%;
+  text-align: left;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.clock>.time>.ms {
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.actual:not(.slider), .selected,
+.timeline-controls .actual input[type="range"]::-webkit-slider-runnable-track {
+  box-shadow: 0 0 5px 1px #24f;
+}

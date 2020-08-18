@@ -1,0 +1,39 @@
+.timeline-controls {
+  display: flex;
+  flex-flow: wrap;
+}
+
+.timeline-controls .button-bar {
+  display: flex;
+}
+
+.timeline-controls>div, .timeline-controls .button-bar>div {
+  display: flex;
+  flex-flow: column;
+}
+
+.timeline-controls button {
+  white-space: nowrap;
+}
+
+.timeline-controls button.small {
+  flex: 1;
+}
+
+.timeline-controls button.big {
+  flex: 20;
+}
+
+.timeline-controls button.big.custom {
+  width: 90px;
+  padding: 0 3px;
+  white-space: normal;
+}
+
+.timeline-controls .slider {
+  margin: 5px 12px;
+}
+
+input[type="range"] {
+  width: 100%;
+}
