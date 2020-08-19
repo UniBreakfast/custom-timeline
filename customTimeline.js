@@ -29,8 +29,9 @@ Date.customTimeline = function ({
     if (typeof diff != 'number')  return false
     current += diff
     stickNow()
-    update()
+    
     if (running)  run()
+    else  update()
     return current
   }
 

@@ -31,9 +31,25 @@
 }
 
 .timeline-controls .slider {
+  display: flex;
+  align-items: center;
   margin: 5px 12px;
 }
 
-input[type="range"] {
+.timeline-controls .slider label {
+  font: 13.33px sans-serif;
+  margin: 0 6px 4px 0;
+}
+
+.timeline-controls .slider>input[type="range"] {
   width: 100%;
+  position: relative;
+}
+
+.timeline-controls .slider:not(.actual)>input[type="range"]::before {
+  position: absolute;
+  top: -45%;
+  left: 50%;
+  transform: translateX(-50%);
+  content: attr(data-label);
 }

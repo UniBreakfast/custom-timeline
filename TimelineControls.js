@@ -4,6 +4,7 @@
       super()
 
       const controls = render(parent)
+      const buttonBar = controls.querySelector('.button-bar')
       const sliderBox = controls.querySelector('.slider')
       const sliderInput = sliderBox.querySelector('input[type="range"]')
       const runBtn = controls.querySelector('[value="run"]')
@@ -11,13 +12,32 @@
       const perSecBtn = controls.querySelector('[value="sec"]')
       const dayPerBtn = controls.querySelector('[value="day"]')
       const customSpeedBtn = controls.querySelector('[value="custom"]')
-      this.elems = { controls, sliderBox, sliderInput, runBtn, freezeBtn,
-                    perSecBtn, dayPerBtn, customSpeedBtn }
+      this.elems = { controls, buttonBar, runBtn, freezeBtn, sliderBox,
+                     sliderInput, perSecBtn, dayPerBtn, customSpeedBtn }
 
       Object.setPrototypeOf(sliderBox, TimelineControlsSliderElement.prototype)
       
+      sliderInput.addEventListener('input', () => {
+        const { label } = sliderInput.dataset
+        if (freezeBtn.classList.contains('selected') && label!='custom speed') {
+          const { value } = sliderInput
+          const units = label.split(' ')[1]
+          if (+value < 0) 
+            sliderInput.dataset.label = `${value} ${units} +`
+          else if (+value > 0)
+            sliderInput.dataset.label = `- ${units} +${value}`
+        }
+      })
+
       sliderInput.addEventListener('change', () => {
-        if (customSpeedBtn.classList.contains('actual')) {
+        const label = sliderInput.dataset.label
+        if (freezeBtn.classList.contains('selected') && label!='custom speed') {
+          const step = 
+            buttonBar.querySelector(`.${label.split(' ')[1]} .big`).value
+          this.triggerShift(sliderInput.value * step)
+          sliderInput.value = 0
+          sliderInput.dataset.label = `- ${label.split(' ')[1]} +`
+        } else if (customSpeedBtn.classList.contains('actual')) {
           customSpeedBtn.value = sliderBox.value
           this.labelCustom()
         } else this.switchActual(sliderBox)
@@ -35,6 +55,11 @@
               runBtn.classList.toggle('selected')
               freezeBtn.classList.toggle('selected')
             }
+            sliderInput.dataset.label = 'custom speed'
+            sliderInput.min = 0
+            sliderInput.max = 9999
+            sliderInput.setAttribute('list', 'speed-slider-marks')
+            sliderInput.value = 0
             this.toggle(e.target.value)
 
           } else if (
@@ -67,6 +92,22 @@
             this.labelCustom()
           }
         }
+      })
+
+      buttonBar.addEventListener('mouseover', e => {
+        if (!freezeBtn.classList.contains('selected')) return
+
+        const parent = e.target.parentElement
+        if (parent.parentElement != buttonBar) return
+
+        const list = parent.querySelector('datalist')
+        sliderInput.dataset.label = `- ${parent.className} +`
+        sliderInput.min = list.options[0].value
+        sliderInput.max = list.options[list.options.length - 1].value
+        sliderInput.setAttribute('list', list.id)
+        sliderInput.value = 0
+
+        sliderBox.classList.remove('actual')
       })
     }
 
@@ -114,6 +155,7 @@
       if (hours) label += hours + '&nbsp;hour(s) '
       if (mins) label += mins + '&nbsp;min(s) '
       if (ms) label += ms + '&nbsp;ms'
+      if (!label) label = 'zero speed, might as well freeze'
       btn.innerHTML = label
     }
   }
@@ -129,49 +171,90 @@
         </div>
         <div>
           <div class="button-bar">
-            <div>
+            <div class="milliseconds">
               <button class='small' value="+1">+</button>
               <button class='big' value="1">ms</button>
               <button class='small' value="-1">-</button>
+              <datalist id="milliseconds-marks">
+                ${[...Array(101).keys()]
+                 .map(i => `<option value="${(i - 50)*10}"></option>`).join('')}
+              </datalist>
             </div>
-            <div>
+            <div class="seconds">
               <button class='small' value="+1000">+</button>
               <button class='big actual' value="1000">sec</button>
               <button class='small' value="-1000">-</button>
+              <datalist id="seconds-marks">
+                ${[...Array(61).keys()]
+                  .map(i => `<option value="${i - 30}"></option>`).join('')}
+              </datalist>
             </div>
-            <div>
+            <div class="munutes">
               <button class='small' value="+60000">+</button>
               <button class='big' value="60000">min</button>
               <button class='small' value="-60000">-</button>
+              <datalist id="munutes-marks">
+                ${[...Array(61).keys()]
+                  .map(i => `<option value="${i - 30}"></option>`).join('')}
+              </datalist>
             </div>
-            <div>
+            <div class="hours">
               <button class='small' value="+36e5">+</button>
               <button class='big' value="36e5">hour</button>
               <button class='small' value="-36e5">-</button>
+              <datalist id="hours-marks">
+                ${[...Array(25).keys()]
+                  .map(i => `<option value="${i - 12}"></option>`).join('')}
+              </datalist>
             </div>
-            <div>
+            <div class="days">
               <button class='small' value="+864e5">+</button>
               <button class='big' value="864e5">day</button>
               <button class='small' value="-864e5">-</button>
+              <datalist id="days-marks">
+                ${[...Array(29).keys()]
+                  .map(i => `<option value="${i - 14}"></option>`).join('')}
+              </datalist>
             </div>
-            <div>
+            <div class="weeks">
               <button class='small' value="+6048e5">+</button>
               <button class='big' value="6048e5">week</button>
               <button class='small' value="-6048e5">-</button>
+              <datalist id="weeks-marks">
+                ${[...Array(17).keys()]
+                  .map(i => `<option value="${i - 8}"></option>`).join('')}
+              </datalist>
             </div>
-            <div>
+            <div class="months">
               <button class='small' value="+2629756800">+</button>
               <button class='big' value="2629756800">month</button>
               <button class='small' value="-2629756800">-</button>
+              <datalist id="months-marks">
+                ${[...Array(13).keys()]
+                  .map(i => `<option value="${i - 6}"></option>`).join('')}
+              </datalist>
             </div>
-            <div>
+            <div class="years">
               <button class='small' value="+31557081600">+</button>
               <button class='big' value="31557081600">year</button>
               <button class='small' value="-31557081600">-</button>
+              <datalist id="years-marks">
+                ${[...Array(21).keys()]
+                  .map(i => `<option value="${i - 10}"></option>`).join('')}
+              </datalist>
             </div>
           </div>
           <div class="slider">
-            <input type="range" value="1159" min="0" max="9999">
+            <input type="range" value="1159" min="0" max="9999" 
+              list="speed-slider-marks" data-label="custom speed">
+            <datalist id="speed-slider-marks">
+              <option value="1160"></option>
+              <option value="2440"></option>
+              <option value="3820"></option>
+              <option value="5179"></option>
+              <option value="6629"></option>
+              <option value="8289"></option>
+            </datalist>
           </div>
         </div>
         <div>
@@ -195,7 +278,7 @@
   
     get value() {
       const relevantControl = this.querySelector('.actual')
-      if (!relevantControl) return 0
+      if (!relevantControl || !+relevantControl.value) return 0
       return this.querySelector('[value="sec"].selected') ? 
         relevantControl.value / 1000 : 864e5 / relevantControl.value
     }
@@ -215,6 +298,15 @@
       const slider = this.querySelector('input[type="range"]')
       if (!slider)  return ''
       const mark = slider.value / slider.max
+
+      switch (slider.value) {
+        case "1160": return 1000
+        case "2440": return 60000
+        case "3820": return 36e5
+        case "5179": return 864e5
+        case "6629": return 6048e5
+        case "8289": return 2629756800
+      }
 
       if (mark < secMark)
         return 999 * (mark / secMark) + 1
