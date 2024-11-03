@@ -1,4 +1,4 @@
-# custom-timeline
+# [custom-timeline](https://github.com/UniBreakfast/custom-timeline)
 
 ### Custom static method `Date.customTimeLine()` to run and follow alternative timelines with custom speed/position
 
